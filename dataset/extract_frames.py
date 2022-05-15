@@ -101,7 +101,7 @@ def extract_frames(file_path, file, directory_name, is_test):
 
             frame_path = os.path.join(extract_path, filename)
 
-            df.loc[0] = [frame_path, filename, video_name, str(frame_count), video_label, is_test, original_video, original_face, target_face, x1, y1, x2, y2]
+            df.loc[df.size+1] = [frame_path, filename, video_name, str(frame_count), video_label, is_test, original_video, original_face, target_face, x1, y1, x2, y2]
             cv.imwrite(frame_path, img_np)
 
             frame_count += step

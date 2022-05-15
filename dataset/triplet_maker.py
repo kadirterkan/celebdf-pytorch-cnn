@@ -16,14 +16,18 @@ def make_triplet(csv_path):
             positive_index = df.loc[(df['class'] == 'real') & (df['original_face'] == original_face)].sample(random_state=1).index
 
             while (positive_index == index):
-                positive_index = df.loc[(df['class'] == 'real') & (df['original_face'] == original_face)].sample(random_state=1).index
+                print("loop?", index, positive_index)
+                positive_index = df.loc[(df['class'] == 'real') & (df['original_face'] == original_face)].sample().index
+                print("index changed?", positive_index)
             
             negative_index = df.loc[(df['class'] == 'fake') & (df['original_face'] == original_face)].sample(random_state=1).index
         else:
             positive_index = df.loc[(df['class'] == 'fake') & (df['original_face'] == original_face)].sample(random_state=1).index
 
             while (negative_index == index):
-                positive_index = df.loc[(df['class'] == 'fake') & (df['original_face'] == original_face)].sample(random_state=1).index
+                print("loop?", index, positive_index)
+                positive_index = df.loc[(df['class'] == 'fake') & (df['original_face'] == original_face)].sample().index
+                print("index changed?", positive_index)
             
             negative_index = df.loc[(df['class'] == 'real') & (df['original_face'] == original_face)].sample(random_state=1).index
         
