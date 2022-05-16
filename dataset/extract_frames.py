@@ -14,6 +14,8 @@ file_switcher = {
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+print(device)
+
 df = None
 path = None
 extract_location = None
@@ -26,6 +28,7 @@ def get_dataframe(idf, ipath, iextract_location, itest_video_names):
     global df, path, extract_location, test_video_names
 
     df = idf
+    df.to_csv("../data/frame_df.csv")
     path = ipath
     extract_location = iextract_location
     test_video_names = itest_video_names
@@ -37,7 +40,7 @@ def get_dataframe(idf, ipath, iextract_location, itest_video_names):
         sub_directory = os.path.join(path, directory_name)
         open_directory(sub_directory, directory_name)
     
-    df.to_csv("frame_df.csv")
+    df.to_csv("../data/frame_df.csv")
 
 def open_directory(sub_path, directory_name):
     
@@ -62,7 +65,7 @@ def extract_frames(file_path, file, directory_name, is_test):
     cap = cv.VideoCapture(file_path)
     length = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
     fps = cap.get(cv.CAP_PROP_FPS)
-    step = int(length / fps)
+    #step = int(length / fps)
     frame_count = 0
 
     video_label = file_switcher.get(directory_name)
@@ -95,7 +98,7 @@ def extract_frames(file_path, file, directory_name, is_test):
         box = face_detect(frame)
 
         if (box is None):
-            frame_count += step
+            frame_count += fps
             cap.set(cv.CAP_PROP_POS_FRAMES, frame_count)
             continue
         else:
@@ -105,11 +108,11 @@ def extract_frames(file_path, file, directory_name, is_test):
 
             frame_path = os.path.join(extract_path, filename)
 
-            df.loc[df.size] = [frame_path, filename, video_name, str(frame_count), video_label, is_test, original_video, original_face, target_face, x1, y1, x2, y2]
+            df.loc[df.size] = [frame_path, filename, video_name, str(frame_count), directory_name, video_label, is_test, original_video, original_face, target_face, x1, y1, x2, y2]
             cv.imwrite(frame_path, img_np)
-            df.to_csv("frame_df.csv")
+            df.to_csv("../data/frame_df.csv")
 
-            frame_count += step
+            frame_count += fps
             cap.set(cv.CAP_PROP_POS_FRAMES, frame_count)
 
     cap.release()
@@ -132,7 +135,7 @@ def face_detect(frame):
         else:
             return None
 
-columns = ["path", "frame_name", "video_name", "frame_number", "class", "test", "original_video", "original_face", "target_face", "x1", "y1", "x2", "y2"]
+columns = ["path", "frame_name", "video_name", "frame_number", "directory_name", "class", "test", "original_video", "original_face", "target_face", "x1", "y1", "x2", "y2"]
 df = pd.DataFrame(columns=columns)
 
 with open (os.path.join("C:\\Users\\kadir\\Documents\\celebdf-pytorch-cnn\\Celeb-DF-v2", "List_of_testing_videos.txt")) as f:
