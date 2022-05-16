@@ -6,3 +6,5 @@ extract/
 
 dataset/.DS_Store
 dataset/result.csv
+data/frame_df.csv
+dataset/frame_df.csv
