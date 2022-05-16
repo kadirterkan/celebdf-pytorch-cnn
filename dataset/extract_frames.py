@@ -2,6 +2,8 @@ import os
 import cv2 as cv
 import pandas as pd
 import numpy as np
+import torch
+
 from facenet_pytorch import MTCNN
 
 file_switcher = {
@@ -10,13 +12,15 @@ file_switcher = {
     'YouTube-real' : 'real'
 }
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 df = None
 path = None
 extract_location = None
 test_video_names = None
 global_count = 0
 
-mtcnn = MTCNN()
+mtcnn = MTCNN(device=device)
 
 def get_dataframe(idf, ipath, iextract_location, itest_video_names):
     global df, path, extract_location, test_video_names
@@ -33,7 +37,7 @@ def get_dataframe(idf, ipath, iextract_location, itest_video_names):
         sub_directory = os.path.join(path, directory_name)
         open_directory(sub_directory, directory_name)
     
-    df.to_csv("result.csv")
+    df.to_csv("frame_df.csv")
 
 def open_directory(sub_path, directory_name):
     
@@ -101,8 +105,9 @@ def extract_frames(file_path, file, directory_name, is_test):
 
             frame_path = os.path.join(extract_path, filename)
 
-            df.loc[df.size+1] = [frame_path, filename, video_name, str(frame_count), video_label, is_test, original_video, original_face, target_face, x1, y1, x2, y2]
+            df.loc[df.size] = [frame_path, filename, video_name, str(frame_count), video_label, is_test, original_video, original_face, target_face, x1, y1, x2, y2]
             cv.imwrite(frame_path, img_np)
+            df.to_csv("frame_df.csv")
 
             frame_count += step
             cap.set(cv.CAP_PROP_POS_FRAMES, frame_count)
@@ -130,9 +135,9 @@ def face_detect(frame):
 columns = ["path", "frame_name", "video_name", "frame_number", "class", "test", "original_video", "original_face", "target_face", "x1", "y1", "x2", "y2"]
 df = pd.DataFrame(columns=columns)
 
-with open (os.path.join("/Users/kadirerkan/VSCode/celebdf/Celeb-DF-v2", "List_of_testing_videos.txt")) as f:
+with open (os.path.join("C:\\Users\\kadir\\Documents\\celebdf-pytorch-cnn\\Celeb-DF-v2", "List_of_testing_videos.txt")) as f:
     lines = f.readlines()
 
 test_video_names = [(line.split(' ')[1]).split('/')[1].strip() for line in lines]
 
-get_dataframe(df, "/Users/kadirerkan/VSCode/celebdf/Celeb-DF-v2", "/Users/kadirerkan/VSCode/celebdf/extract", test_video_names)
+get_dataframe(df, "C:\\Users\\kadir\\Documents\\celebdf-pytorch-cnn\\Celeb-DF-v2", "C:\\Users\\kadir\\Documents\\celebdf-pytorch-cnn\\extract", test_video_names)

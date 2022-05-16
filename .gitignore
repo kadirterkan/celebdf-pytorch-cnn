@@ -5,3 +5,4 @@ extract/
 .DS_Store
 
 dataset/.DS_Store
+dataset/result.csv

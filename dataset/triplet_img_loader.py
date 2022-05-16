@@ -53,7 +53,7 @@ class TripletLoader(torch.util.data.Dataset):
         y1, y2 = center_y-size//2, center_y+size//2
         face = Image.fromarray(img).crop([x1, y1, x2, y2])
         face = cv.cvtColor(face, cv.COLOR_RGB2BGR)
-        return cv.resize(face, (128,128))
+        return cv.resize(face, (160,160))
 
 columns = ["path", "frame_name", "video_name", "frame_number", "class", "test", "original_video", "original_face", "target_face", "x1", "y1", "x2", "y2"]
 
